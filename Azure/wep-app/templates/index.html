@@ -1,0 +1,252 @@
+<!DOCTYPE html> 
+
+<html>
+    <title>IOT Azure, RaspberryPI & GrovePI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+    <style>
+        body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
+        .w3-bar-block .w3-bar-item {padding:20px}
+    </style>
+    <head>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+            google.charts.load('current', {'packages':['corechart', 'controls', 'gauge']});
+            google.charts.setOnLoadCallback(drawChart);
+            google.charts.setOnLoadCallback(drawChart2);
+            google.charts.setOnLoadCallback(drawChart3);
+            google.charts.setOnLoadCallback(drawChart4);
+            google.charts.setOnLoadCallback(drawChart5);
+            google.charts.setOnLoadCallback(drawChart6);
+            google.charts.setOnLoadCallback(drawChart7);
+            google.charts.setOnLoadCallback(drawChart8);
+            
+            function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date Range');
+                data.addColumn('number', 'Temperature (ºC)');
+                data.addColumn('number', 'Humidity (%)');
+                data.addRows([
+                {% for i in range(0, len) %} 
+                    [new Date("{{iot_data_output[i][5]}}"), {{iot_data_output[i][0]}}, {{iot_data_output[i][1]}}],
+                {% endfor %}
+                ]);
+                var dateSlider = new google.visualization.ControlWrapper({
+                    'controlType': 'DateRangeFilter',
+                    'containerId': 'filter_div_1',
+                    'options': {
+                        'filterColumnLabel': 'Date Range'
+                    }
+                });
+                var lineChart = new google.visualization.ChartWrapper({
+                    'chartType': 'ScatterChart',
+                    'containerId': 'chart_div_1',
+                    'options': {
+                        'title': 'Temperature (ºC) & Humidity (%)',
+                        'width': 1500,
+                        'height': 500,
+                        'pieSliceText': 'value',
+                        'legend': 'right',
+                        'hAxis': {
+                            'gridlines': {'count': 15}
+                        }
+                    }
+                });
+                var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div_1'));
+                dashboard.bind(dateSlider, lineChart);
+                dashboard.draw(data);
+            };
+
+            function drawChart2() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date Range');
+                data.addColumn('number', 'Air Pollution (PPM)');
+                data.addColumn('number', 'LGP Leakage (PPM)');
+                data.addRows([
+                {% for i in range(0, len) %} 
+                    [new Date("{{iot_data_output[i][5]}}"), {{iot_data_output[i][2]}}, {{iot_data_output[i][4]}}],
+                {% endfor %}
+                ]);
+                var dateSlider = new google.visualization.ControlWrapper({
+                    'controlType': 'DateRangeFilter',
+                    'containerId': 'filter_div_2',
+                    'options': {
+                        'filterColumnLabel': 'Date Range'
+                    }
+                });
+                var lineChart = new google.visualization.ChartWrapper({
+                    'chartType': 'ScatterChart',
+                    'containerId': 'chart_div_2',
+                    'options': {
+                        'title': 'Air Pollution (PPM) & LGP Leakage (PPM)',
+                        'width': 1500,
+                        'height': 500,
+                        'pieSliceText': 'value',
+                        'legend': 'right',
+                        'hAxis': {
+                            'gridlines': {'count': 15}
+                        }
+                    }
+                });
+                var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div_2'));
+                dashboard.bind(dateSlider, lineChart);
+                dashboard.draw(data);
+            };
+
+            function drawChart3() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date Range');
+                data.addColumn('number', 'Sound Intensity (Decibel)');
+                data.addRows([
+                {% for i in range(0, len) %} 
+                    [new Date("{{iot_data_output[i][5]}}"), {{iot_data_output[i][3]}}],
+                {% endfor %}
+                ]);
+                var dateSlider = new google.visualization.ControlWrapper({
+                    'controlType': 'DateRangeFilter',
+                    'containerId': 'filter_div_3',
+                    'options': {
+                        'filterColumnLabel': 'Date Range'
+                    }
+                });
+                var lineChart = new google.visualization.ChartWrapper({
+                    'chartType': 'ScatterChart',
+                    'containerId': 'chart_div_3',
+                    'options': {
+                        'title': 'Sound Intensity (Decibel)',
+                        'width': 1500,
+                        'height': 500,
+                        'pieSliceText': 'value',
+                        'legend': 'right',
+                        'hAxis': {
+                            'gridlines': {'count': 15}
+                        }
+                    }
+                });
+                var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div_3'));
+                dashboard.bind(dateSlider, lineChart);
+                dashboard.draw(data);
+            };
+
+            function drawChart4() {
+                var data = google.visualization.arrayToDataTable([
+                    ['Label', 'Value'],
+                    ['Temperature', {{iot_latest_measures[0]}}]
+                ]);
+                var options = {
+                    width: 200, height: 175,
+                    min: 15, max: 45, 
+                    greenFrom: 15, greenTo: 30,
+                    yellowFrom: 30, yellowTo: 35,
+                    redFrom: 35, redTo: 45,
+                    minorTicks: 10
+                };
+                var chart = new google.visualization.Gauge(document.getElementById('latest_measure_1'));
+                chart.draw(data, options)
+            };
+
+            function drawChart5() {
+                var data = google.visualization.arrayToDataTable([
+                    ['Label', 'Value'],
+                    ['Humidity', {{iot_latest_measures[1]}}]
+                ]);
+                var options = {
+                    width: 200, height: 175,
+                    min: 0, max: 100, 
+                    greenFrom: 30, greenTo: 60,
+                    yellowFrom: 0, yellowTo: 30,
+                    redFrom: 60, redTo: 100,
+                    minorTicks: 10
+                };
+                var chart = new google.visualization.Gauge(document.getElementById('latest_measure_2'));
+                chart.draw(data, options)
+            };
+
+            function drawChart6() {
+                var data = google.visualization.arrayToDataTable([
+                    ['Label', 'Value'],
+                    ['Air', {{iot_latest_measures[2]}}]
+                ]);
+                var options = {
+                    width: 200, height: 175,
+                    min: 50, max: 300, 
+                    greenFrom: 50, greenTo: 150,
+                    yellowFrom: 150, yellowTo: 200,
+                    redFrom: 200, redTo: 300,
+                    minorTicks: 10
+                };
+                var chart = new google.visualization.Gauge(document.getElementById('latest_measure_3'));
+                chart.draw(data, options)
+            };
+
+            function drawChart7() {
+                var data = google.visualization.arrayToDataTable([
+                    ['Label', 'Value'],
+                    ['LGP', {{iot_latest_measures[4]}}]
+                ]);
+                var options = {
+                    width: 200, height: 175,
+                    min: 20, max: 200, 
+                    greenFrom: 20, greenTo: 60,
+                    yellowFrom: 60, yellowTo: 150,
+                    redFrom: 150, redTo: 200,
+                    minorTicks: 10
+                };
+                var chart = new google.visualization.Gauge(document.getElementById('latest_measure_4'));
+                chart.draw(data, options)
+            };
+
+            function drawChart8() {
+                var data = google.visualization.arrayToDataTable([
+                    ['Label', 'Value'],
+                    ['Sound', {{iot_latest_measures[3]}}]
+                ]);
+                var options = {
+                    width: 200, height: 175,
+                    min: 0, max: 100, 
+                    greenFrom: 0, greenTo: 30,
+                    yellowFrom: 30, yellowTo: 60,
+                    redFrom: 60, redTo: 100,
+                    minorTicks: 10
+                };
+                var chart = new google.visualization.Gauge(document.getElementById('latest_measure_5'));
+                chart.draw(data, options)
+            }
+        </script>
+    </head>
+
+    <body>
+        <div class="w3-top">
+            <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
+                <div class="w3-padding-16">Latest Measure Recorded at: {{iot_latest_measures_date}}</div>
+            </div>
+        </div>
+        <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px">
+            <div class="w3-center w3-padding-16 w3-row" id="latest_measure">
+                <div class="w3-col m2 w3-center" id="latest_measure_1"></div>
+                <div class="w3-col m2 w3-center" id="latest_measure_2"></div>
+                <div class="w3-col m2 w3-center" id="latest_measure_3"></div>
+                <div class="w3-col m2 w3-center" id="latest_measure_4"></div>
+                <div class="w3-col m2 w3-center" id="latest_measure_5"></div>
+            </div>
+        </div>
+        <hr>
+        <div class="w3-container w3-padding-32 w3-center" id="dashboard_div_1"> 
+            <div class="w3-padding-32" id="chart_div_1"></div>
+            <div class="w3-padding-32" id="filter_div_1"></div>
+        </div>
+        <hr>
+        <div class="w3-container w3-padding-32 w3-center" id="dashboard_div_2"> 
+            <div id="chart_div_2"></div>
+            <div id="filter_div_2"></div>
+        </div>
+        <hr>
+        <div class="w3-container w3-padding-32 w3-center" id="dashboard_div_3"> 
+            <div id="chart_div_3"></div>
+            <div id="filter_div_3"></div>
+        </div>
+        <hr>
+    </body>
+</html>
