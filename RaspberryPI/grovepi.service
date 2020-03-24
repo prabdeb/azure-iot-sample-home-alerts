@@ -1,0 +1,10 @@
+[Unit]
+Description=Grove PI Service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/Work/grovepi_read_and_send_to_azure_iot_hub.py
+
+[Install]
+WantedBy=multi-user.target

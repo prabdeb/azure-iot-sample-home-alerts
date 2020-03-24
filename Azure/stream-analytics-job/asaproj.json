@@ -1,0 +1,5 @@
+{
+    "name": "stream-analytics-job",
+    "startFile": "grove-pi-iot.asaql",
+    "configurations": []
+}

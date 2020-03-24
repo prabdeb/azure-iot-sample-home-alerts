@@ -1,0 +1,88 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Create_JSON_Object_from_Content": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "ContentJson",
+                            "type": "object",
+                            "value": "@json(base64ToString(triggerBody()?['ContentData']))"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Send_email_(V2)": {
+                "inputs": {
+                    "body": {
+                        "Body": "<p><span style=\"font-family: arial\"><strong>Welcome to Prabal's IOT with Rasberry PI</strong></span><span style=\"font-family: arial\"><br>\n<br>\nThere could be bsome alterts on the below sensor values, please act accordingly<br>\n<br>\n</span><span style=\"font-family: arial\"><u><strong>Temperature</strong></u></span><span style=\"font-family: arial\"><strong> = </strong></span><span style=\"font-family: arial\"><strong>@{variables('ContentJson')?['temperature']}</strong></span><span style=\"font-family: arial\"><strong> oC<br>\n</strong></span><span style=\"font-family: arial\"><u><strong>Humidity</strong></u></span><span style=\"font-family: arial\"><strong> = </strong></span><span style=\"font-family: arial\"><strong>@{variables('ContentJson')?['humidity']}</strong></span><span style=\"font-family: arial\"><strong> %<br>\n</strong></span><span style=\"font-family: arial\"><u><strong>Air Quality</strong></u></span><span style=\"font-family: arial\"><strong> = </strong></span><span style=\"font-family: arial\"><strong>@{variables('ContentJson')?['air']}</strong></span><span style=\"font-family: arial\"><strong> PPM<br>\n</strong></span><span style=\"font-family: arial\"><u><strong>LPG Leakage</strong></u></span><span style=\"font-family: arial\"><strong> = </strong></span><span style=\"font-family: arial\"><strong>@{variables('ContentJson')?['lpg']}</strong></span><span style=\"font-family: arial\"><strong> PPM<br>\n</strong></span><span style=\"font-family: arial\"><u><strong>Sound Intensity</strong></u></span><span style=\"font-family: arial\"><strong> = </strong></span><span style=\"font-family: arial\"><strong>@{variables('ContentJson')?['sound']}</strong></span><span style=\"font-family: arial\"><strong> dB</strong></span></p>",
+                        "Importance": "Important",
+                        "Subject": "[Alert] Important mail from Prabal Rasberry PI",
+                        "To": "<Mail ID colon/coma separated>"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['gmail']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/v2/Mail"
+                },
+                "runAfter": {
+                    "Create_JSON_Object_from_Content": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_message_is_received_in_a_queue_(auto-complete)": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['servicebus']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/@{encodeURIComponent(encodeURIComponent('alrets'))}/messages/head",
+                    "queries": {
+                        "queueType": "Main"
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 5
+                },
+                "type": "ApiConnection"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "gmail": {
+                    "connectionId": "<connection id, auto populated once connected with gmail>",
+                    "connectionName": "gmail",
+                    "id": "<id, auto populated once connected with gmail>"
+                },
+                "servicebus": {
+                    "connectionId": "<connection id, auto populated once connected with service bus>",
+                    "connectionName": "servicebus",
+                    "id": "<id, auto populated once connected with service bus>"
+                }
+            }
+        }
+    }
+}

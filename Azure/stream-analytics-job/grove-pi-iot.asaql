@@ -1,0 +1,50 @@
+With Temp AS (
+	SELECT
+		COUNT(DISTINCT EventProcessedUtcTime) AS CountTime,
+		temperature,
+		humidity,
+		air,
+		sound,
+		lpg,
+		deviceid,
+		System.Timestamp AS OutputTime
+	FROM
+		"<input name>" TIMESTAMP BY EventProcessedUtcTime
+	GROUP BY
+		temperature,
+		deviceid,
+		humidity,
+		air,
+		sound,
+		lpg,
+		System.Timestamp
+	)
+	
+	SELECT
+		AVG(temperature) AS temperature,
+		AVG(humidity) AS humidity,
+		AVG(air) AS air,
+		AVG(sound) AS sound,
+		AVG(lpg) AS lpg,
+		MAX(OutputTime) AS time
+    INTO
+        rawresults
+	FROM Temp
+	GROUP BY deviceid,TumblingWindow(minute, 30)
+
+	SELECT
+		AVG(temperature) AS temperature,
+		AVG(humidity) AS humidity,
+		AVG(air) AS air,
+		AVG(sound) AS sound,
+		AVG(lpg) AS lpg,
+		MAX(OutputTime) AS time
+	INTO
+		alerts
+	FROM Temp
+	WHERE
+		temperature > 35
+		OR air >= 200
+    	OR sound >= 900
+    	OR lpg >= 150
+	GROUP BY deviceid,TumblingWindow(minute, 5)
