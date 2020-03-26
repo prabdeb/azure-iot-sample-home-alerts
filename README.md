@@ -27,7 +27,7 @@ Sample for Azure IoT based Home Sensors (**Temperature**, **Humidity**, **Air Qu
 **Sample Alert:**
 ![Alert Email](Docs/images/alert.png)
 
-2. Dashboard with latest measures from all sensors as well as historical data of measures in graphical format (can be filtered with data)
+2. Dashboard with latest measures from all sensors as well as historical data of measures in graphical format (can be filtered with Date)
 
 **Sample Dashboard Latest Measures:**
 ![Alert Email](Docs/images/dashboard_1.png)
