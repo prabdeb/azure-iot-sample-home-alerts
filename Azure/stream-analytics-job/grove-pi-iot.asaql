@@ -45,6 +45,6 @@ With Temp AS (
 	WHERE
 		temperature > 35
 		OR air >= 200
-    	OR sound >= 900
+    	OR sound >= 80
     	OR lpg >= 150
 	GROUP BY deviceid,TumblingWindow(minute, 5)
