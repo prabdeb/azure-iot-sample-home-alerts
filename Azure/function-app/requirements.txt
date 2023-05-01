@@ -1,4 +1,4 @@
 azure-functions
-Flask==1.1.1
+Flask==2.3.2
 azure-storage-blob==12.3.0
 python-dateutil==2.8.1
